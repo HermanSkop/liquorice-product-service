@@ -2,6 +2,7 @@ package org.example.liqouriceproductservice.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.liqouriceproductservice.dtos.ProductDto;
 import org.example.liqouriceproductservice.dtos.request.*;
 import org.example.liqouriceproductservice.dtos.response.*;
 import org.springframework.kafka.annotation.KafkaHandler;
@@ -33,15 +34,16 @@ public class KafkaConsumerService {
 
     @KafkaHandler
     @SendTo("${kafka.topics.liquorice-product-replies}")
-    public PagedResponse<ProductPreviewDto> handleGetProducts(@Payload GetProductsRequest request, @Headers Map<String, Object> headers) {
+    public GetProductsResponse handleGetProducts(@Payload GetProductsRequest request, @Headers Map<String, Object> headers) {
         logMessageDetails("GetProducts", request, headers);
-        PagedResponse<ProductPreviewDto> response = productService.getProductPreviewDtos(
+        PagedResponse<ProductDto> response = productService.getProductPreviewDtos(
                 request.getPageable(),
                 request.getSearch(),
                 request.getCategories()
         );
+
         log.debug("Sending response with {} products", response.getContent().size());
-        return response;
+        return new GetProductsResponse(response);
     }
 
     @KafkaHandler
@@ -49,18 +51,8 @@ public class KafkaConsumerService {
     public SetAvailabilityResponse handleSetAvailability(@Payload SetAvailabilityRequest request, @Headers Map<String, Object> headers) {
         logMessageDetails("SetAvailability", request, headers);
         return productService.setAvailable(request.getProductId(), request.isAvailable())
-                .map(product -> new SetAvailabilityResponse(
-                        product.getId(),
-                        product.isAvailable(),
-                        true,
-                        "Product availability updated successfully"
-                ))
-                .orElse(new SetAvailabilityResponse(
-                        request.getProductId(),
-                        request.isAvailable(),
-                        false,
-                        "Product not found"
-                ));
+                .map(SetAvailabilityResponse::new)
+                .orElseThrow();
     }
 
     private void logMessageDetails(String operation, Object payload, Map<String, Object> headers) {

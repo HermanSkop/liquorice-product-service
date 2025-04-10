@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.liqouriceproductservice.Product;
 import org.example.liqouriceproductservice.ProductRepository;
 import org.example.liqouriceproductservice.dtos.response.PagedResponse;
-import org.example.liqouriceproductservice.dtos.response.ProductPreviewDto;
+import org.example.liqouriceproductservice.dtos.ProductDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +27,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ModelMapper modelMapper;
 
-    public PagedResponse<ProductPreviewDto> getProductPreviewDtos(Pageable pageable, String search, List<String> categoryNames) {
+    public PagedResponse<ProductDto> getProductPreviewDtos(Pageable pageable, String search, List<String> categoryNames) {
         Page<Product> productPage;
 
         if (search != null && !search.isEmpty() && categoryNames != null && !categoryNames.isEmpty()) {
@@ -40,7 +40,7 @@ public class ProductService {
             productPage = productRepository.findAll(pageable);
         }
 
-        List<ProductPreviewDto> productDtos = productPage.getContent().stream()
+        List<ProductDto> productDtos = productPage.getContent().stream()
                         .map(this::mapToProductPreviewDto)
                         .collect(Collectors.toList());
 
@@ -60,8 +60,8 @@ public class ProductService {
                 .into(new ArrayList<>());
     }
 
-    public ProductPreviewDto mapToProductPreviewDto(Product product) {
-        ProductPreviewDto dto = modelMapper.map(product, ProductPreviewDto.class);
+    public ProductDto mapToProductPreviewDto(Product product) {
+        ProductDto dto = modelMapper.map(product, ProductDto.class);
         if (product.getImage() != null) {
             dto.setImage(Base64.getEncoder().encodeToString(product.getImage()));
         }
@@ -69,7 +69,7 @@ public class ProductService {
     }
 
     @Transactional
-    public Optional<ProductPreviewDto> setAvailable(String productId, boolean isAvailable) {
+    public Optional<ProductDto> setAvailable(String productId, boolean isAvailable) {
         Optional<Product> productOpt = productRepository.findById(productId);
         if (productOpt.isEmpty()) {
             return Optional.empty();

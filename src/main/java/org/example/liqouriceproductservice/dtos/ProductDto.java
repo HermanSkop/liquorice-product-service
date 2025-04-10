@@ -1,4 +1,4 @@
-package org.example.liqouriceproductservice.dtos.response;
+package org.example.liqouriceproductservice.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductPreviewDto {
+public class ProductDto {
     private String id;
     private String name;
     private String description;
