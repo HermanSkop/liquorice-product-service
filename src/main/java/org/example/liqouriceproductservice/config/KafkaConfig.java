@@ -9,14 +9,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
-import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
-import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
-import org.springframework.kafka.support.LoggingProducerListener;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,14 +34,6 @@ public class KafkaConfig {
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        // Add acknowledgment configuration
-        configProps.put(ProducerConfig.ACKS_CONFIG, "all");
-        // Enable retries
-        configProps.put(ProducerConfig.RETRIES_CONFIG, 3);
-        // Set delivery timeout
-        configProps.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, 60000);
-        // Prevent producer from shutting down before message is sent
-        configProps.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, 60000);
 
         configProps.put(JsonSerializer.TYPE_MAPPINGS,
                 "getCategoriesResponse:org.example.liqouriceproductservice.dtos.response.GetCategoriesResponse," +
@@ -75,17 +63,12 @@ public class KafkaConfig {
 
     @Bean
     public KafkaTemplate<String, Object> kafkaTemplate() {
-        KafkaTemplate<String, Object> template = new KafkaTemplate<>(producerFactory());
-        template.setProducerListener(new LoggingProducerListener<>());
-        // Ensure producer doesn't shut down immediately
-        template.setDefaultTopic(replyTopic);
-        return template;
+        return new KafkaTemplate<>(producerFactory());
     }
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, Object> factory =
-                new ConcurrentKafkaListenerContainerFactory<>();
+        ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         factory.setReplyTemplate(kafkaTemplate());
         return factory;
