@@ -37,9 +37,11 @@ public class KafkaConsumerService {
     public GetProductsResponse handleGetProducts(@Payload GetProductsRequest request, @Headers Map<String, Object> headers) {
         logMessageDetails("GetProducts", request, headers);
         PagedResponse<ProductDto> response = productService.getProductPreviewDtos(
-                request.getPageable(),
                 request.getSearch(),
-                request.getCategories()
+                request.getCategories(),
+                request.getPageNumber(),
+                request.getPageSize(),
+                request.getSort()
         );
 
         log.debug("Sending response with {} products", response.getContent().size());

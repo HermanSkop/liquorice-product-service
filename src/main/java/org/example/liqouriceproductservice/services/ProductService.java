@@ -27,8 +27,9 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ModelMapper modelMapper;
 
-    public PagedResponse<ProductDto> getProductPreviewDtos(Pageable pageable, String search, List<String> categoryNames) {
+    public PagedResponse<ProductDto> getProductPreviewDtos(String search, List<String> categoryNames, int pageNumber, int pageSize, List<String> sort){
         Page<Product> productPage;
+        Pageable pageable = Pageable.ofSize(pageSize).withPage(pageNumber);
 
         if (search != null && !search.isEmpty() && categoryNames != null && !categoryNames.isEmpty()) {
             productPage = productRepository.findByNameContainingIgnoreCaseAndCategoriesIn(search, categoryNames, pageable);
