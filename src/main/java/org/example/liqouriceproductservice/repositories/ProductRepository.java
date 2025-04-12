@@ -1,5 +1,6 @@
-package org.example.liqouriceproductservice;
+package org.example.liqouriceproductservice.repositories;
 
+import org.example.liqouriceproductservice.models.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;

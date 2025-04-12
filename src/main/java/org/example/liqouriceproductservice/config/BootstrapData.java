@@ -1,8 +1,8 @@
 package org.example.liqouriceproductservice.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.liqouriceproductservice.Product;
-import org.example.liqouriceproductservice.ProductRepository;
+import org.example.liqouriceproductservice.models.Product;
+import org.example.liqouriceproductservice.repositories.ProductRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

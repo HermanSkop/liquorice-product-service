@@ -1,4 +1,4 @@
-package org.example.liqouriceproductservice;
+package org.example.liqouriceproductservice.models;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;

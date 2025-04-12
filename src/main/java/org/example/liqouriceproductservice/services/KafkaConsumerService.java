@@ -35,17 +35,19 @@ public class KafkaConsumerService {
     @KafkaHandler
     @SendTo("${kafka.topics.liquorice-product-replies}")
     public GetProductsResponse handleGetProducts(@Payload GetProductsRequest request, @Headers Map<String, Object> headers) {
-        logMessageDetails("GetProducts", request, headers);
-        PagedResponse<ProductDto> response = productService.getProductPreviewDtos(
+        /*logMessageDetails("GetProducts", request, headers);
+        PagedResponse<ProductDto> response = productService.getProductDtos(
                 request.getSearch(),
                 request.getCategories(),
                 request.getPageNumber(),
                 request.getPageSize(),
                 request.getSort()
-        );
+        );*//*
 
         log.debug("Sending response with {} products", response.getContent().size());
-        return new GetProductsResponse(response);
+        return new GetProductsResponse(response);*/
+
+        return null;
     }
 
     @KafkaHandler

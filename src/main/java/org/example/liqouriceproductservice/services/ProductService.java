@@ -2,8 +2,8 @@ package org.example.liqouriceproductservice.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.liqouriceproductservice.Product;
-import org.example.liqouriceproductservice.ProductRepository;
+import org.example.liqouriceproductservice.models.Product;
+import org.example.liqouriceproductservice.repositories.ProductRepository;
 import org.example.liqouriceproductservice.dtos.response.PagedResponse;
 import org.example.liqouriceproductservice.dtos.ProductDto;
 import org.modelmapper.ModelMapper;
@@ -27,9 +27,8 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ModelMapper modelMapper;
 
-    public PagedResponse<ProductDto> getProductPreviewDtos(String search, List<String> categoryNames, int pageNumber, int pageSize, List<String> sort){
+    public PagedResponse<ProductDto> getProductDtos(Pageable pageable, String search, List<String> categoryNames) {
         Page<Product> productPage;
-        Pageable pageable = Pageable.ofSize(pageSize).withPage(pageNumber);
 
         if (search != null && !search.isEmpty() && categoryNames != null && !categoryNames.isEmpty()) {
             productPage = productRepository.findByNameContainingIgnoreCaseAndCategoriesIn(search, categoryNames, pageable);
@@ -42,8 +41,8 @@ public class ProductService {
         }
 
         List<ProductDto> productDtos = productPage.getContent().stream()
-                        .map(this::mapToProductPreviewDto)
-                        .collect(Collectors.toList());
+                .map(this::mapToProductDto)
+                .collect(Collectors.toList());
 
         return new PagedResponse<>(
                 productDtos,
@@ -61,7 +60,7 @@ public class ProductService {
                 .into(new ArrayList<>());
     }
 
-    public ProductDto mapToProductPreviewDto(Product product) {
+    public ProductDto mapToProductDto(Product product) {
         ProductDto dto = modelMapper.map(product, ProductDto.class);
         if (product.getImage() != null) {
             dto.setImage(Base64.getEncoder().encodeToString(product.getImage()));
@@ -78,6 +77,6 @@ public class ProductService {
 
         Product product = productOpt.get();
         product.setAvailable(isAvailable);
-        return Optional.of(mapToProductPreviewDto(productRepository.save(product)));
+        return Optional.of(mapToProductDto(productRepository.save(product)));
     }
 }
