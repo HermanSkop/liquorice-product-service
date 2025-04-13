@@ -1,4 +1,4 @@
-package org.example.liqouriceproductservice.dtos.response;
+package org.example.liqouriceproductservice.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

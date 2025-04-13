@@ -2,13 +2,14 @@ package org.example.liqouriceproductservice.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.example.liqouriceproductservice.dtos.ProductDto;
-import org.example.liqouriceproductservice.dtos.response.PagedResponse;
+import org.example.liqouriceproductservice.dtos.PagedResponse;
 import org.example.liqouriceproductservice.exceptions.NotFoundException;
 import org.example.liqouriceproductservice.services.ProductService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -54,5 +55,10 @@ public class ProductController {
         return productService.setAvailable(productId, isAvailable)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new NotFoundException("Product not found"));
+    }
+
+    @GetMapping("/batch")
+    public ResponseEntity<List<ProductDto>> getProductById(@RequestParam String productIds) {
+        return new ResponseEntity<>(productService.getProductDtos(List.of(productIds.split(","))), HttpStatus.ACCEPTED);
     }
 }

@@ -29,13 +29,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @EnableMethodSecurity
 public class SecurityConfig {
-
-    @Value("#{'${api-gateway.allowed-ips}'.split(',')}")
-    private List<String> allowedIps;
-
-    @Value("${api-gateway.port}")
-    private String apiGatewayPort;
-
     @Value("${jwt.secret}")
     private String jwtSecret;
 

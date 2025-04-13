@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.liqouriceproductservice.models.Product;
 import org.example.liqouriceproductservice.repositories.ProductRepository;
-import org.example.liqouriceproductservice.dtos.response.PagedResponse;
+import org.example.liqouriceproductservice.dtos.PagedResponse;
 import org.example.liqouriceproductservice.dtos.ProductDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -52,6 +52,13 @@ public class ProductService {
                 productPage.getTotalPages(),
                 productPage.isLast()
         );
+    }
+
+    public List<ProductDto> getProductDtos(List<String> productIds) {
+        List<Product> products = productRepository.findAllById(productIds);
+        return products.stream()
+                .map(this::mapToProductDto)
+                .collect(Collectors.toList());
     }
 
     public List<String> getAllCategories() {
