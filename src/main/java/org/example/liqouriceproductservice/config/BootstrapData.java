@@ -6,6 +6,7 @@ import org.example.liqouriceproductservice.repositories.ProductRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.io.FileInputStream;
@@ -18,6 +19,7 @@ import java.util.List;
 @Configuration
 public class BootstrapData {
     @Bean
+    @Profile("!test")
     CommandLineRunner initDatabase(ProductRepository productRepo, MongoTemplate mongoTemplate) {
         return args -> {
             mongoTemplate.getDb().drop();
